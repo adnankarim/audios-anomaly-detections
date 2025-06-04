@@ -241,7 +241,7 @@ The MLP decoder mirrors the encoder structure in reverse, forming a symmetric au
 For a more expressive decoder, we also explore a UNet-style \[@ronneberger2015] architecture that includes skip connections and multi-resolution decoding. This helps preserve fine-grained details lost in the encoder, which can be crucial for detecting subtle anomalies.
 
 <figure>
-  <img src="UNET_dc.png" alt="UNet-style Decoder" width="80%">
+  <img src="imgs/UNET_dc.png" alt="UNet-style Decoder" width="80%">
   <figcaption>Figure 9: UNet-style decoder architecture</figcaption>
 </figure>
 
