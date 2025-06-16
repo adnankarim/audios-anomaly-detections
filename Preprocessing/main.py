@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import librosa
-import soundfile as sf
 from scipy.signal import medfilt
 
 def trim_silence(y, thresh_db=-40, frame_length=2048, hop_length=512):
@@ -60,11 +59,10 @@ def preprocess_audio_file(path, target_sr=16000, n_mels=64, hop_length=512, max_
 
 def process_folder(folder, out_folder, stats=None):
     os.makedirs(out_folder, exist_ok=True)
-    mel_list = []
-    files = sorted([f for f in os.listdir(folder) if f.lower().endswith('.wav')])
-    for f in files:
-        logmel = preprocess_audio_file(os.path.join(folder, f))
-        mel_list.append(logmel)
+    files = sorted(f for f in os.listdir(folder) if f.lower().endswith('.wav'))
+    if not files:
+        raise ValueError(f"No WAV files found in {folder}")
+    mel_list = [preprocess_audio_file(os.path.join(folder, f)) for f in files]
     mel_arr = np.stack(mel_list)
     # If stats not provided, compute mean/std from mel_arr
     if stats is None:
@@ -77,8 +75,7 @@ def process_folder(folder, out_folder, stats=None):
         np.save(os.path.join(out_folder, f.replace('.wav', '.npy')), normed)
     return mean, std
 
-# USAGE EXAMPLE
-# First, process training set and get mean/std
-train_mean, train_std = process_folder('train_wavs', 'processed_train')
-# Next, process test set with the same mean/std
-_ = process_folder('test_wavs', 'processed_test', stats=(train_mean, train_std))
+if __name__ == "__main__":
+    # Example usage: process training and test sets
+    train_mean, train_std = process_folder('train_wavs', 'processed_train')
+    _ = process_folder('test_wavs', 'processed_test', stats=(train_mean, train_std))
